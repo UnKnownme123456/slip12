@@ -1,77 +1,99 @@
-//PHP
-Q1)
-//PHP FILE
-<?php
-$x=$_POST['s1'];
-$y=$_POST['s2'];
-$op=$_POST['op'];
- function add($x=4,$y=2)
- {
+Q1
+#include<stdlib.h>
+#include<mpi.h>
 
- $result=$x+$y;
- echo"adition is $result";
- }
- function sub($x=4,$y=2)
- {
+#define ARRAY_SIZE 10
 
- $result=$x-$y;
- echo"subtraction is $result";
- }
-switch ($op)
+int main(int argc,char*argv[])
 {
-case"1": add($x,$y);
- break;
-case"2": sub($x,$y);
- break;
+int rank,size;
+int i,sum=0;
+int data[ARRAY_SIZE];
+
+MPI_Init(&argc,&argv);
+MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+MPI_Comm_size(MPI_COMM_WORLD,&size);
+
+if(rank==0)
+{
+ printf("Generating random data...\n");
+for(i=0;i<ARRAY_SIZE;i++)
+{
+data[i]=rand()%100;
+printf("The array is:%d\n",data[i]);
 }
-?>
+}
+int chunk_size=ARRAY_SIZE;
+int *chunk=(int*)malloc(chunk_size*sizeof(int));
 
-//HTML FILE
-<html>
-<body>
-<form action="slip12in.php"method="POST">
-first number
-<input type=text name=s2><br>
-second number
-<input type=text name=s1><br>
-chose opration from below<br>
-addition
-<input type=radio value="1" name=op> <br>
-subtraction
-<input type=radio value="2"name=op> <br>
-<input type= submit value="submit"><br>
-</body>
-</html>
-PHP FILE
-<?php
-include'slip12.php';
-?>
+MPI_Scatter(data,chunk_size,MPI_INT,chunk,chunk_size,MPI_INT,0,MPI_COMM_WORLD);
 
 
+int local_sum=0;
+for(i=0;i<chunk_size;i++)
+{
+local_sum +=data[i];
+printf("The local sum is:%d\n",local_sum);
+}
+
+MPI_Reduce(&local_sum,&sum,1,MPI_INT,MPI_SUM,0,MPI_COMM_WORLD);
+
+if(rank==0)
+{
+printf("The final sum is:%d\n",sum);
+}
+free(chunk);
+MPI_Finalize():
+return 0;
+}
 
 
-//DS
-Q2A)
- import matplotlib.pyplot as plt
-import numpy as np
-x = np.random.randn(50)
-y = np.random.randn(50)
-plt.plot(x,y)
-plt.show()
-plt.scatter(x,y)
-plt.show()
-plt.hist(x)
-plt.show()
-plt.boxplot(y, vert=False)
-plt.show()
+Q2
 
-Q2B)
-import pandas as p
-df=p.DataFrame({'name':['kunal','rekha','satish','ashish','radha'],
-               'dept':['production','computer','manufacturing',None,'manufacturing'],
-                'salary':[100000,300000,20000,300000,80000] })
-print(df)
-d=df.dropna()
-print(d)
+#include<stdlib.h>
+#include<mpi.h>
 
- 
+#define ARRAY_SIZE 10
+
+int main(int argc,char*argv[])
+{
+int rank,size;
+int i,sum=0;
+int data[ARRAY_SIZE];
+
+MPI_Init(&argc,&argv);
+MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+MPI_Comm_size(MPI_COMM_WORLD,&size);
+
+if(rank==0)
+{
+ printf("Generating random data...\n");
+for(i=0;i<ARRAY_SIZE;i++)
+{
+data[i]=rand()%100;
+printf("The array is:%d\n",data[i]);
+}
+}
+int chunk_size=ARRAY_SIZE;
+int *chunk=(int*)malloc(chunk_size*sizeof(int));
+
+MPI_Scatter(data,chunk_size,MPI_INT,chunk,chunk_size,MPI_INT,0,MPI_COMM_WORLD);
+
+
+int local_sum=0;
+for(i=0;i<chunk_size;i++)
+{
+local_sum +=data[i];
+printf("The local sum is:%d\n",local_sum);
+}
+
+MPI_Reduce(&local_sum,&sum,1,MPI_INT,MPI_SUM,0,MPI_COMM_WORLD);
+
+if(rank==0)
+{
+printf("The final sum is:%d\n",sum);
+}
+free(chunk);
+MPI_Finalize():
+return 0;
+}
